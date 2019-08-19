@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.popura.dao.OrderMapper">
+	
+<insert id="workOrderInsert" parameterType="WorkOrder">
+	insert into workorder(projectId,executor,description,orderLevel,createDate) values(#{projectId},#{executor},#{description},#{orderLevel},sysdate())
+</insert>
+
+<select id="allSelect" resultType="WorkOrder">
+	SELECT w.id,(CASE w.orderLevel WHEN 1 THEN '1级' WHEN 2 THEN '2级' WHEN 3 THEN '3级' END) AS orderLevelName,w.executor,w.description,w.createDate,p.projectName
+	FROM workorder w INNER JOIN project p ON w.projectId = p.id ORDER BY w.id DESC
+
+</select>
+</mapper>
+
+
+
+
+
+
+
+
+

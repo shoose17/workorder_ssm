@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+            xmlns:aop="http://www.springframework.org/schema/aop"  
+            xmlns:p="http://www.springframework.org/schema/p"  
+            xmlns:tx="http://www.springframework.org/schema/tx"  
+            xmlns:context="http://www.springframework.org/schema/context"  
+            xsi:schemaLocation="   
+                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd   
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd   
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+                http://www.springframework.org/schema/context 
+                http://www.springframework.org/schema/context/spring-context.xsd">  
+                
+   	<context:property-placeholder location="classpath:database.properties"/>
+    <!-- JNDI获取数据源(使用dbcp连接池) -->  
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+    	<property name="driverClassName" value="${driver}"/>
+		<property name="url" value="${url}"/>
+		<property name="username" value="${user}"/>
+		<property name="password" value="${password}"/>
+	</bean>
+	 	
+ 	<!-- 配置mybatis SqlSessionFactoryBean -->
+ 	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+ 		<property name="dataSource" ref="dataSource"/>
+ 		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+ 	</bean>
+ 	
+    <!-- 事务管理   -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+    	<property name="dataSource" ref="dataSource"/>  
+ 	</bean>
+ 	
+ 	 <!-- 配置事务通知，即让哪些方法需要事务支持 -->
+     <tx:advice id="tx" transaction-manager="txManager">
+      	<tx:attributes>
+      		<tx:method name="*" propagation="REQUIRED"/>
+      	</tx:attributes>
+     </tx:advice>
+     
+     <!-- 配置事务切面，即让哪些包下的类需要事务 -->
+     <aop:config>
+      	<aop:pointcut id="pointcut" expression="execution(* com.popura.service.*.*(..))"/>
+     	<aop:advisor advice-ref="tx" pointcut-ref="pointcut"/>
+     </aop:config>
+ 	
+ 	<!-- 将mapper代理对象加入到Spring容器
+		会把mapper代理对象加入到Spring容器放入容器后，便于我们注解取得如@repository
+	-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<property name="basePackage" value="com.popura.dao"/>
+    </bean>       
+</beans>

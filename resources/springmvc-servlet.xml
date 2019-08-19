@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+   
+   <!-- springmvc框架整合 -->
+   <!-- 加入注解扫描 -->    
+   <context:component-scan base-package="com.popura"/>
+   
+   <!-- 添加注解驱动 -->
+   <mvc:annotation-driven/>
+   
+ 
+	<!-- 加载静态资源 
+   	作用：在springMVC-servlet.xml中配置
+   	<mvc:default-servlet-handler />后，
+   	会在Spring MVC上下文中定义一个
+   	org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler，
+   	它会像一个检查员，对进入DispatcherServlet
+   	的URL进行筛查，如果发现是静态资源的请求，
+   	就将该请求转由Web应用服务器默认的Servlet
+   	（如：DefaultServlet）处理，
+   	如果不是静态资源的请求，
+   	才由DispatcherServlet继续处理。
+   -->
+   <!-- 加载静态资源 -->
+   <mvc:default-servlet-handler/>
+   
+   
+   <!-- 注册适配器 ： 如果加入了注解驱动该配置可以省略 -->
+  <!--  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+   	<property name="messageConverters">
+		<list>
+		   <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+		</list>
+	</property>
+   </bean> -->
+   
+   <!-- 视图解析器 -->
+   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+   	<property name="prefix" value="/jsp/"/>
+    <property name="suffix" value=".jsp"/>
+   </bean>
+</beans>   
